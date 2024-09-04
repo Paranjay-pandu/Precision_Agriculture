@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Requirement Prediction</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .content {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        .form-group {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: none; /* Hidden by default, will be displayed when needed */
+        }
+        .form-group.show {
+            display: block;
+            opacity: 1;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop id="video-background">
+        <source src="{{ url_for('static', filename='videos/Background.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="content">
+        <h1>Water Requirement Prediction</h1>
+        <form action="/predict" method="post" id="prediction-form">
+            <div class="form-group">
+                <label for="air_temperature">Air Temperature (°C):</label>
+                <input type="number" step="0.1" id="air_temperature" name="air_temperature" required>
+            </div>
+
+            <div class="form-group">
+                <label for="air_humidity">Air Humidity (%):</label>
+                <input type="number" step="0.1" id="air_humidity" name="air_humidity" required>
+            </div>
+
+            <div class="form-group">
+                <label for="wind_speed">Wind Speed (Km/h):</label>
+                <input type="number" step="0.1" id="wind_speed" name="wind_speed" required>
+            </div>
+
+            <div class="form-group">
+                <label for="solar_radiation">Solar Radiation (W/m²):</label>
+                <input type="number" step="0.1" id="solar_radiation" name="solar_radiation" required>
+            </div>
+
+            <div class="form-group">
+                <label for="soil_moisture">Soil Moisture:</label>
+                <input type="number" step="0.1" id="soil_moisture" name="soil_moisture" required>
+            </div>
+
+            <div class="form-group">
+                <label for="soil_humidity">Soil Humidity:</label>
+                <input type="number" step="0.1" id="soil_humidity" name="soil_humidity" required>
+            </div>
+
+            <input type="submit" value="Predict Water Requirement">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const formGroups = document.querySelectorAll('.form-group');
+            const submitBtn = document.querySelector('input[type="submit"]');
+            let currentInputIndex = 0;
+
+            function showNextInput() {
+                if (currentInputIndex < formGroups.length) {
+                    formGroups[currentInputIndex].classList.add('show');
+                    formGroups[currentInputIndex].querySelector('input').focus();
+                } else {
+                    submitBtn.style.display = 'block';
+                }
+            }
+
+            formGroups.forEach((group, index) => {
+                const input = group.querySelector('input');
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        if (input.value !== '') {
+                            currentInputIndex++;
+                            showNextInput();
+                        }
+                    }
+                });
+                input.addEventListener('blur', function() {
+                    if (input.value !== '' && index === currentInputIndex) {
+                        currentInputIndex++;
+                        showNextInput();
+                    }
+                });
+            });
+
+            showNextInput();
+        });
+
+        document.getElementById("prediction-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.prediction) {
+                    alert(`Predicted Water Requirement: ${data.prediction} Liters`);
+                } else {
+                    alert('Error: Prediction data is missing');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+for model_selection the results were for these models:
+
+    Model: Linear Regression
+    MSE: 0.0603
+    RMSE: 0.2455
+    R^2: 0.9924
+    Cross Validation Score: 0.9889
+
+    Model: Decision Tree Regressor
+    MSE: 0.0626
+    RMSE: 0.2502
+    R^2: 0.9921
+    Cross Validation Score: 0.9776
+
+    Model: Random Forest Regressor
+    MSE: 0.0118
+    RMSE: 0.1084
+    R^2: 0.9985
+    Cross Validation Score: 0.9863
+
+    Model: Gradient Boosting Regressor
+    MSE: 0.0197
+    RMSE: 0.1405
+    R^2: 0.9975
+    Cross Validation Score: 0.9924
+
+    Model: Support Vector Regressor
+    MSE: 0.0628
+    RMSE: 0.2506
+    R^2: 0.9921
+    Cross Validation Score: 0.9064
+
+    
+NOTES:
+Attributes:
+Soil ph, type
+soil moisture
+humidity
+temperature
+average rainfall in mm
+soil type(optional)
+
+Target:
+Amount of water
+
+ADD HERE
+
+Penman-Monteith equation: for water calculation based on the parameters(irrigation - water prediction calculator algorithm)
+https://www.fao.org/land-water/databases-and-software/cropwat/en/
+
+Watering the plant: https://www.kaggle.com/datasets/nelakurthisudheer/dataset-for-predicting-watering-the-plants/data
+
+Crop prediction: https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset
+
+Claude chat: https://claude.ai/chat/2b90db43-a545-4cdf-8b34-c00a75e60dda (paranjaypandu mail)
+
+
+
+To calculate the Amount of water: multiply the EP*area_cm2*0.1
